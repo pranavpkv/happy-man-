@@ -1,0 +1,87 @@
+import pygame
+import sys
+
+# Initialize Pygame
+pygame.init()
+
+# Set up the screen
+WIDTH, HEIGHT = 800, 600
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("Jumping Man")
+
+# Colors
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+BLUE = (0, 0, 255)
+
+# Man properties
+man_width = 40
+man_height = 120
+man_x = (WIDTH - man_width) // 2
+man_y = HEIGHT - man_height
+man_jump_height = 200
+man_jump_speed = 5
+gravity = 0.5
+is_jumping = False
+
+# Head properties
+head_radius = 20
+head_color = BLACK
+
+# Body properties
+body_width = 40
+body_height = 100
+body_color = BLACK
+
+# Leg properties
+leg_length = 50
+leg_width = 10
+leg_color = BLACK
+
+# Hand properties
+hand_length = 50
+hand_width = 10
+hand_color = BLACK
+
+# Main game loop
+running = True
+while running:
+    screen.fill(WHITE)
+
+    # Event handling
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE and not is_jumping:
+                is_jumping = True
+
+    # Jumping and falling
+    if is_jumping:
+        man_y -= man_jump_speed
+        man_jump_height -= man_jump_speed
+        if man_jump_height <= 0:
+            is_jumping = False
+    else:
+        if man_y < HEIGHT - man_height:
+            man_y += gravity
+        else:
+            man_jump_height = 300
+
+    # Draw man
+    pygame.draw.circle(screen, head_color, (man_x + man_width // 2, man_y + head_radius), head_radius)
+    pygame.draw.rect(screen, body_color, (man_x + (man_width - body_width) // 2, man_y + head_radius * 2, body_width, body_height))
+    pygame.draw.line(screen, leg_color, (man_x + man_width // 2, man_y + head_radius * 2 + body_height), (man_x, man_y + head_radius * 2 + body_height + leg_length), leg_width)
+    pygame.draw.line(screen, leg_color, (man_x + man_width // 2, man_y + head_radius * 2 + body_height), (man_x + man_width, man_y + head_radius * 2 + body_height + leg_length), leg_width)
+    pygame.draw.line(screen, hand_color, (man_x + (man_width - body_width) // 2, man_y + head_radius * 2 + body_height // 2), (man_x - hand_length, man_y + head_radius * 2 + body_height // 2), hand_width)
+    pygame.draw.line(screen, hand_color, (man_x + (man_width + body_width) // 2, man_y + head_radius * 2 + body_height // 2), (man_x + man_width + hand_length, man_y + head_radius * 2 + body_height // 2), hand_width)
+
+    # Update display
+    pygame.display.flip()
+
+    # Cap the frame rate
+    pygame.time.Clock().tick(60)
+
+# Quit Pygame
+pygame.quit()
+sys.exit()
